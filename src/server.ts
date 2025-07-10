@@ -1,5 +1,7 @@
 import express from 'express';
 import { PrismaClient } from './generated/prisma';
+import { release } from 'os';
+import { RetryAgent } from 'undici-types';
 
 const port = 3000;
 const app = express();
@@ -34,7 +36,7 @@ app.post('/movies', async (req, res) => {
         });
 
         if (movieWithSameTitle) {
-            return res.status(409).send({ message: "Movie already exists"});
+            return res.status(409).send({ message: "Movie already exists" });
         }
 
         //Criando o filme
@@ -48,10 +50,43 @@ app.post('/movies', async (req, res) => {
             }
         });
     } catch (error) {
-        return res.status(500).send({ message: "Error creating movie"});
+        return res.status(500).send({ message: "Error creating movie" });
     }
 
     res.status(201).send('Movie created');
+});
+
+//atualizando dados de um filme
+app.put("/movies/:id", async (req, res) => {
+    // pegar o id do registro que vai ser atualizado
+    const id = Number(req.params.id);
+
+    try {
+        const movie = await prisma.movie.findUnique({
+            where: {
+                id
+            }
+        });
+
+        if (!movie) {
+            return res.status(404).send({ message: "Movie not found" });
+        }
+
+        const data = { ...req.body };
+        data.release_date = data.release_date ? new Date(data.release_date) : undefined;
+
+        // pegar os dados que vão ser atualizados
+        await prisma.movie.update({
+            where: {
+                id
+            },
+            data: data
+        });
+    } catch (error) {
+        return res.status(500).send({ message: "Error updating movie" });
+    }
+    // retornar o status correto informando que o filme foi atualizado
+    res.status(200).send()
 });
 
 app.listen(port, () => {
