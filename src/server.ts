@@ -1,7 +1,6 @@
 import express from 'express';
 import { PrismaClient } from './generated/prisma';
-import { release } from 'os';
-import { RetryAgent } from 'undici-types';
+import { Request, Response } from 'express';
 
 const port = 3000;
 const app = express();
@@ -9,7 +8,7 @@ const prisma = new PrismaClient();
 
 app.use(express.json()); // Middleware to parse JSON bodies
 
-app.get('/movies', async (_, res) => {
+app.get('/movies', async (_, res: Response) => {
     const movies = await prisma.movie.findMany({
         orderBy: {
             title: 'asc'
@@ -22,7 +21,7 @@ app.get('/movies', async (_, res) => {
     res.json(movies);
 });
 
-app.post('/movies', async (req, res) => {
+app.post('/movies', async (req: Request, res: Response) => {
 
     const { title, genre_id, language_id, oscar_count, release_date } = req.body;
 
@@ -52,12 +51,11 @@ app.post('/movies', async (req, res) => {
     } catch (error) {
         return res.status(500).send({ message: "Error creating movie" });
     }
-
-    res.status(201).send('Movie created');
+    res.status(201).send({ message: "Movie created" });
 });
 
 //atualizando dados de um filme
-app.put("/movies/:id", async (req, res) => {
+app.put("/movies/:id", async (req: Request, res: Response) => {
     // pegar o id do registro que vai ser atualizado
     const id = Number(req.params.id);
 
@@ -86,7 +84,56 @@ app.put("/movies/:id", async (req, res) => {
         return res.status(500).send({ message: "Error updating movie" });
     }
     // retornar o status correto informando que o filme foi atualizado
-    res.status(200).send()
+    return res.status(200).send({ message: "Movie updated" });
+});
+
+// deletando um filme
+
+app.delete("/movies/:id", async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    try {
+        // Verifica se o filme existe antes de tentar deletar
+        const movie = await prisma.movie.findUnique({ where: { id } });
+
+        if (!movie) {
+            return res.status(404).send({ message: "Movie not found" });
+        }
+
+        await prisma.movie.delete({
+            where: {
+                id
+            }
+        });
+    } catch (error) {
+        return res.status(500).send({ message: "Error deleting movie" });
+    }
+    return res.status(200).send({ message: "Movie deleted" });
+});
+
+// filtrar filmes por gênero
+app.get("/movies/:genreName", async (req: Request, res: Response) => {
+    
+    // filtrar os filmes do banco pelo gênero
+    try {
+        const moviesFiltered = await prisma.movie.findMany({
+            include: {
+                genres: true,
+                languages: true
+            },
+            where: {
+                genres: {
+                    name: {
+                        equals: req.params.genreName,
+                        mode: 'insensitive' // Ignora maiúsculas e minúsculas
+                    }
+                }
+            }
+        });
+        // retornar os filmes
+        res.status(200).send(moviesFiltered);
+    } catch (error) {
+        return res.status(500).send({ message: "Error fetching movies by genre" });
+    }
 });
 
 app.listen(port, () => {
