@@ -1,12 +1,15 @@
 import express from 'express';
 import { PrismaClient } from './generated/prisma';
 import { Request, Response } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from '../swagger.json';
 
 const port = 3000;
 const app = express();
 const prisma = new PrismaClient();
 
-app.use(express.json()); // Middleware to parse JSON bodies
+app.use(express.json());
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/movies', async (_, res: Response) => {
     const movies = await prisma.movie.findMany({
@@ -112,7 +115,7 @@ app.delete("/movies/:id", async (req: Request, res: Response) => {
 
 // filtrar filmes por gênero
 app.get("/movies/:genreName", async (req: Request, res: Response) => {
-    
+
     // filtrar os filmes do banco pelo gênero
     try {
         const moviesFiltered = await prisma.movie.findMany({
