@@ -38,7 +38,8 @@ app.post('/movies', async (req: Request, res: Response) => {
         });
 
         if (movieWithSameTitle) {
-            return res.status(409).send({ message: "Movie already exists" });
+            res.status(409).send({ message: "Movie already exists" })
+            return;
         }
 
         //Criando o filme
@@ -52,7 +53,8 @@ app.post('/movies', async (req: Request, res: Response) => {
             }
         });
     } catch (error) {
-        return res.status(500).send({ message: "Error creating movie" });
+        res.status(500).send({ message: "Error creating movie" });
+        return;
     }
     res.status(201).send({ message: "Movie created" });
 });
@@ -70,7 +72,8 @@ app.put("/movies/:id", async (req: Request, res: Response) => {
         });
 
         if (!movie) {
-            return res.status(404).send({ message: "Movie not found" });
+            res.status(404).send({ message: "Movie not found" })
+            return;
         }
 
         const data = { ...req.body };
@@ -84,10 +87,12 @@ app.put("/movies/:id", async (req: Request, res: Response) => {
             data: data
         });
     } catch (error) {
-        return res.status(500).send({ message: "Error updating movie" });
+        res.status(500).send({ message: "Error updating movie" })
+        return;
     }
     // retornar o status correto informando que o filme foi atualizado
-    return res.status(200).send({ message: "Movie updated" });
+    res.status(200).send({ message: "Movie updated" })
+    return;
 });
 
 // deletando um filme
@@ -99,7 +104,8 @@ app.delete("/movies/:id", async (req: Request, res: Response) => {
         const movie = await prisma.movie.findUnique({ where: { id } });
 
         if (!movie) {
-            return res.status(404).send({ message: "Movie not found" });
+            res.status(404).send({ message: "Movie not found" })
+            return;
         }
 
         await prisma.movie.delete({
@@ -108,9 +114,11 @@ app.delete("/movies/:id", async (req: Request, res: Response) => {
             }
         });
     } catch (error) {
-        return res.status(500).send({ message: "Error deleting movie" });
+        res.status(500).send({ message: "Error deleting movie" })
+        return;
     }
-    return res.status(200).send({ message: "Movie deleted" });
+    res.status(200).send({ message: "Movie deleted" })
+    return;
 });
 
 // filtrar filmes por gênero
@@ -135,7 +143,8 @@ app.get("/movies/:genreName", async (req: Request, res: Response) => {
         // retornar os filmes
         res.status(200).send(moviesFiltered);
     } catch (error) {
-        return res.status(500).send({ message: "Error fetching movies by genre" });
+        res.status(500).send({ message: "Error fetching movies by genre" })
+        return;
     }
 });
 
