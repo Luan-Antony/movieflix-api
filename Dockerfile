@@ -1,20 +1,27 @@
-# Imagem base
-FROM node:20
+FROM node:20-alpine AS build
 
-# Diretorio de trabalho
 WORKDIR /app
 
-# Copiar apenas os arquivos necessários
 COPY package.json ./
 COPY package-lock.json ./
 
-RUN npm install --production
+RUN npm install
 
-# Copiar somente a pasta dist e outros arquivos necessários para rodar
-COPY dist ./dist
+COPY . .
 
-# Expor a porta
-EXPOSE 3000
 
-# Comando para rodar
-CMD ["node", "dist/src/server.js"]
+RUN npx prisma generate
+
+RUN npm run build
+
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY --from=build /app/package*.json ./
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/src/generated ./dist/generated
+
+CMD ["node", "dist/server.js"]
