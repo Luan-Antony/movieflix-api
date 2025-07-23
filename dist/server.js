@@ -5,12 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const prisma_1 = require("./generated/prisma");
-//import swaggerDocument from '../swagger.json';
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+const swagger_json_1 = __importDefault(require("../swagger.json"));
 const port = 3000;
 const app = (0, express_1.default)();
 const prisma = new prisma_1.PrismaClient();
 app.use(express_1.default.json());
-//app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
 app.get('/movies', async (_, res) => {
     const movies = await prisma.movie.findMany({
         orderBy: {
