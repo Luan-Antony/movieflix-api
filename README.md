@@ -37,6 +37,7 @@ PostgreSQL – Banco de dados relacional utilizado pelo Prisma.
 
 ## 1️⃣ Clonar o repositório
 git clone https://github.com/seu-usuario/api-filmes.git
+
 cd api-filmes
 
 <br>
@@ -44,7 +45,9 @@ cd api-filmes
 ## 2️⃣ Configurar variáveis de ambiente
 
 Crie um arquivo .env na raiz com:
+
 DATABASE_URL="postgresql://postgres:elefante@localhost:5432/movieflix?schema=public"
+
 PORT=3000
 
 <br>
@@ -56,7 +59,9 @@ docker-compose up --build
 
 ## 4️⃣ Rodar localmente (sem Docker)
 npm install
+
 npx prisma migrate dev
+
 npm run dev
 
 <br>
