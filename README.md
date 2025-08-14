@@ -36,7 +36,7 @@ PostgreSQL – Banco de dados relacional utilizado pelo Prisma.
 # 🛠 Instalação e Uso
 
 ## 1️⃣ Clonar o repositório
-git clone https://github.com/seu-usuario/api-filmes.git
+git clone https://github.com/Luan-Antony/movieflix-api
 
 cd api-filmes
 
