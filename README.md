@@ -57,15 +57,6 @@ docker-compose up --build
 
 <br>  
 
-## 4️⃣ Rodar localmente (sem Docker)
-npm install
-
-npx prisma migrate dev
-
-npm run dev
-
-<br>
-
 ## 📌 Rotas da API
 GET  - http://localhost:3000/movies |	Lista todos os filmes
 
