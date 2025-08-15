@@ -62,13 +62,8 @@ npx prisma studio
 
 <br>
 
-## 📌 Rotas da API
-GET  - http://localhost:3000/movies |	Lista todos os filmes
+## 📌 Swagger UI
 
-GET	 - http://localhost:3000/movies/genero | Filtrar por genero
+rodar o projeto com "npm run dev"
 
-POST - http://localhost:3000/movies |	Adiciona um novo filme
-
-PUT	 - http://localhost:3000/movies/id	Atualiza um filme
-
-DELETE  - http://localhost:3000/movies/id	| Remove um filme
+localhost:3000/docs
