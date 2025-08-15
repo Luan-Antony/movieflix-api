@@ -57,6 +57,11 @@ docker-compose up --build
 
 <br>  
 
+## 4️⃣ Rodar o Prisma Studio
+npx prisma studio
+
+<br>
+
 ## 📌 Rotas da API
 GET  - http://localhost:3000/movies |	Lista todos os filmes
 
